@@ -6,7 +6,7 @@ function App() {
   const [activities, setActivities] = useState<Activity[]>([]);
 
   useEffect(() => {
-    axios.get<Activity[]>("http://localhost:5000/api/activities")
+    axios.get<Activity[]>("https://localhost:5000/api/activities")
       .then(response => setActivities(response.data));
   }, []);
 
