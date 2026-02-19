@@ -4,19 +4,21 @@ import { useActivities } from "../../../lib/hooks/useActivities";
 
 
 export default function ActivityList() {
-  
-  const {activities, isPending} = useActivities();
 
-  if (!activities || isPending)
+  const { activities, isLoading } = useActivities();
+
+  if (isLoading)
     return <Typography>Loading...</Typography>
-  
+
+  if (!activities) return <Typography>Not activities found</Typography>
+
   return (
-    <Box sx={{display: "flex", flexDirection: 'column', gap: 3}}>
-        {activities.map(activity => (
-            <ActivityCard 
-              key={activity.id} activity={activity}
-            />
-        ))}
+    <Box sx={{ display: "flex", flexDirection: 'column', gap: 3 }}>
+      {activities.map(activity => (
+        <ActivityCard
+          key={activity.id} activity={activity}
+        />
+      ))}
     </Box>
   )
 }
