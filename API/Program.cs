@@ -2,8 +2,10 @@ using API.Middleware;
 using Application.Activities.Queries;
 using Application.Activities.Validators;
 using Application.Core;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
+using Infrastructure.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -23,7 +25,8 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddCors();
-builder.Services.AddMediatR(cfg => {
+builder.Services.AddMediatR(cfg =>
+{
     cfg.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>();
     cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
 });
@@ -39,11 +42,27 @@ builder.Services.AddIdentityApiEndpoints<User>(opt =>
 .AddEntityFrameworkStores<AppDbContext>();
 
 
-builder.Services.ConfigureApplicationCookie(options =>
+builder.Services.ConfigureApplicationCookie(opt =>
 {
-    options.Cookie.SameSite = SameSiteMode.None;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    opt.Cookie.SameSite = SameSiteMode.None;
+    opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
+
+builder.Services.AddScoped<IUserAccessor, UserAccessor>();
+// builder.Services.AddAuthorizationBuilder()
+//     .AddPolicy("IsActivityHost", policy =>
+//     {
+//         policy.Requirements.Add(new IsHostRequirement());
+//     });
+builder.Services.AddAuthorization(opt =>
+{
+    opt.AddPolicy("IsActivityHost", policy =>
+    {
+        policy.Requirements.Add(new IsHostRequirement());
+    });
+});
+builder.Services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
+
 
 
 var app = builder.Build();
@@ -56,7 +75,7 @@ app.UseCors(x => x
     .AllowCredentials()
     // Ensure BOTH http and https versions of your React app are here
     .WithOrigins("http://localhost:3000")
-    // , "https://localhost:3000")
+// , "https://localhost:3000")
 );
 
 app.UseAuthentication();
