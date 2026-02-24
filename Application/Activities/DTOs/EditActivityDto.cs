@@ -1,4 +1,3 @@
-using System;
 using Domain;
 
 namespace Application.Activities.DTOs;
