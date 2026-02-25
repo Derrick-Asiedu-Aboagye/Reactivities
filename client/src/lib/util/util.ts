@@ -1,4 +1,4 @@
-import { format, formatDistance, formatDistanceToNow, type DateArg } from "date-fns";
+import { format, formatDistanceToNow, type DateArg } from "date-fns";
 import z from "zod";
 
 export function formatDate(date: DateArg<Date>) {
