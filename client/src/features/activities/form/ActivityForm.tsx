@@ -35,7 +35,6 @@ export default function ActivityForm() {
     }, [activity, reset])
 
     const onSubmit = async (data: ActivitySchema) => {
-        // console.log(data);
         const { location, ...rest } = data;
         const flattenedData = { ...rest, ...location };
         try {

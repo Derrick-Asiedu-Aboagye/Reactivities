@@ -82,16 +82,19 @@ app.UseCors(x => x
     .AllowAnyMethod()
     .AllowCredentials()
     // Ensure BOTH http and https versions of your React app are here
-    .WithOrigins("http://localhost:3000")
-// , "https://localhost:3000")
+    .WithOrigins("http://localhost:3000", "https://localhost:3000")
 );
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<User>(); // e.g. api/login
 app.MapHub<CommentHub>("/comments");
+app.MapFallbackToController("Index", "Fallback");
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
